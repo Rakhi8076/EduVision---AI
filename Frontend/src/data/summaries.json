@@ -1,0 +1,43 @@
+{
+  "examples": [
+    {
+      "id": 1,
+      "topic": "Operating Systems",
+      "summary": [
+        "An OS manages computer hardware and software resources",
+        "Acts as an interface between user and hardware",
+        "Handles process scheduling, memory management, and I/O",
+        "Common types: Windows, macOS, Linux, Android",
+        "Key concepts: multitasking, virtual memory, file systems"
+      ],
+      "keyTerms": ["Process", "Thread", "Deadlock", "Virtual Memory", "Kernel"],
+      "difficulty": "Intermediate"
+    },
+    {
+      "id": 2,
+      "topic": "Machine Learning Basics",
+      "summary": [
+        "ML is a subset of AI that learns from data",
+        "Three types: Supervised, Unsupervised, Reinforcement Learning",
+        "Common algorithms: Linear Regression, Decision Trees, Neural Networks",
+        "Requires training data, features, and labels",
+        "Applications: image recognition, NLP, recommendation systems"
+      ],
+      "keyTerms": ["Model", "Training", "Features", "Overfitting", "Accuracy"],
+      "difficulty": "Advanced"
+    },
+    {
+      "id": 3,
+      "topic": "Data Structures",
+      "summary": [
+        "Organized ways to store and access data efficiently",
+        "Linear: Arrays, Linked Lists, Stacks, Queues",
+        "Non-linear: Trees, Graphs, Hash Tables",
+        "Choice depends on use case and time complexity",
+        "Fundamental for algorithm design and optimization"
+      ],
+      "keyTerms": ["Array", "Stack", "Queue", "Tree", "Graph"],
+      "difficulty": "Beginner"
+    }
+  ]
+}

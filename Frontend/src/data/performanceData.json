@@ -1,0 +1,37 @@
+{
+  "overview": {
+    "gpa": 3.72,
+    "attendance": 92,
+    "assignmentsCompleted": 47,
+    "totalAssignments": 52,
+    "quizScore": 85
+  },
+  "subjects": [
+    { "name": "Programming", "score": 90, "grade": "A" },
+    { "name": "Data Structures", "score": 85, "grade": "A-" },
+    { "name": "Mathematics", "score": 68, "grade": "C+" },
+    { "name": "Physics", "score": 65, "grade": "C" },
+    { "name": "Statistics", "score": 72, "grade": "B-" },
+    { "name": "Database Systems", "score": 88, "grade": "A-" }
+  ],
+  "weeklyStudyHours": [
+    { "week": "Week 1", "hours": 12 },
+    { "week": "Week 2", "hours": 15 },
+    { "week": "Week 3", "hours": 10 },
+    { "week": "Week 4", "hours": 18 },
+    { "week": "Week 5", "hours": 14 },
+    { "week": "Week 6", "hours": 20 },
+    { "week": "Week 7", "hours": 16 },
+    { "week": "Week 8", "hours": 22 }
+  ],
+  "quizPerformance": [
+    { "quiz": "Quiz 1", "score": 75 },
+    { "quiz": "Quiz 2", "score": 80 },
+    { "quiz": "Quiz 3", "score": 70 },
+    { "quiz": "Quiz 4", "score": 88 },
+    { "quiz": "Quiz 5", "score": 92 },
+    { "quiz": "Quiz 6", "score": 85 }
+  ],
+  "strengths": ["Programming", "Data Structures", "Database Systems"],
+  "improvements": ["Mathematics", "Statistics", "Physics"]
+}

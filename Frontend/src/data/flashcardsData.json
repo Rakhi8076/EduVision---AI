@@ -1,0 +1,40 @@
+{
+  "decks": [
+    {
+      "id": "cs-fundamentals",
+      "title": "CS Fundamentals",
+      "emoji": "💻",
+      "cards": [
+        { "front": "What is a Neural Network?", "back": "A machine learning model inspired by the human brain, consisting of layers of interconnected nodes (neurons) that process information." },
+        { "front": "What is Big O Notation?", "back": "A mathematical notation describing the upper bound of an algorithm's time or space complexity as input size grows." },
+        { "front": "What is a Hash Table?", "back": "A data structure that maps keys to values using a hash function for O(1) average-case lookups." },
+        { "front": "What is REST API?", "back": "Representational State Transfer - an architectural style for designing networked applications using HTTP methods." },
+        { "front": "What is Recursion?", "back": "A programming technique where a function calls itself to solve smaller instances of the same problem." }
+      ]
+    },
+    {
+      "id": "ml-basics",
+      "title": "Machine Learning",
+      "emoji": "🤖",
+      "cards": [
+        { "front": "What is Supervised Learning?", "back": "A type of ML where the model learns from labeled training data to make predictions on new data." },
+        { "front": "What is Overfitting?", "back": "When a model learns the training data too well, including noise, resulting in poor generalization to new data." },
+        { "front": "What is a Loss Function?", "back": "A function that measures how well a model's predictions match the actual values, guiding the training process." },
+        { "front": "What is Gradient Descent?", "back": "An optimization algorithm that iteratively adjusts model parameters to minimize the loss function." },
+        { "front": "What is Cross-Validation?", "back": "A technique to evaluate model performance by splitting data into multiple train/test sets and averaging results." }
+      ]
+    },
+    {
+      "id": "web-dev",
+      "title": "Web Development",
+      "emoji": "🌐",
+      "cards": [
+        { "front": "What is the Virtual DOM?", "back": "A lightweight copy of the actual DOM that React uses to efficiently update only changed elements." },
+        { "front": "What is CSS Flexbox?", "back": "A CSS layout model that allows responsive elements within a container to be automatically arranged." },
+        { "front": "What is CORS?", "back": "Cross-Origin Resource Sharing - a security mechanism that allows or restricts web requests across different domains." },
+        { "front": "What is WebSocket?", "back": "A protocol providing full-duplex communication channels over a single TCP connection for real-time data." },
+        { "front": "What is SSR?", "back": "Server-Side Rendering - rendering web pages on the server before sending HTML to the client for faster initial loads." }
+      ]
+    }
+  ]
+}

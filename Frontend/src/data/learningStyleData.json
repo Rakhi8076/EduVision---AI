@@ -1,0 +1,100 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "How do you prefer learning new concepts?",
+      "options": [
+        { "text": "Watching videos or diagrams", "style": "visual" },
+        { "text": "Reading detailed notes", "style": "reading" },
+        { "text": "Listening to lectures or podcasts", "style": "auditory" },
+        { "text": "Hands-on practice and experiments", "style": "kinesthetic" }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "When studying for an exam, you usually…",
+      "options": [
+        { "text": "Create mind maps and charts", "style": "visual" },
+        { "text": "Re-read textbooks and notes", "style": "reading" },
+        { "text": "Discuss topics with friends", "style": "auditory" },
+        { "text": "Practice problems repeatedly", "style": "kinesthetic" }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "What helps you remember information best?",
+      "options": [
+        { "text": "Color-coded highlights and images", "style": "visual" },
+        { "text": "Written summaries", "style": "reading" },
+        { "text": "Recording and replaying explanations", "style": "auditory" },
+        { "text": "Building projects or models", "style": "kinesthetic" }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "In a group project, you prefer to…",
+      "options": [
+        { "text": "Design the presentation slides", "style": "visual" },
+        { "text": "Write the report", "style": "reading" },
+        { "text": "Present and explain to the team", "style": "auditory" },
+        { "text": "Build the prototype", "style": "kinesthetic" }
+      ]
+    },
+    {
+      "id": 5,
+      "question": "Your ideal study environment is…",
+      "options": [
+        { "text": "A clean desk with visual aids on the wall", "style": "visual" },
+        { "text": "A quiet library with books", "style": "reading" },
+        { "text": "Background music or study group", "style": "auditory" },
+        { "text": "A lab or workshop", "style": "kinesthetic" }
+      ]
+    },
+    {
+      "id": 6,
+      "question": "When explaining something complex, you…",
+      "options": [
+        { "text": "Draw a diagram", "style": "visual" },
+        { "text": "Write step-by-step instructions", "style": "reading" },
+        { "text": "Explain it verbally with analogies", "style": "auditory" },
+        { "text": "Demonstrate it physically", "style": "kinesthetic" }
+      ]
+    },
+    {
+      "id": 7,
+      "question": "Which app would you use most for studying?",
+      "options": [
+        { "text": "Canva / Miro for visuals", "style": "visual" },
+        { "text": "Notion / Google Docs", "style": "reading" },
+        { "text": "Spotify podcasts / YouTube lectures", "style": "auditory" },
+        { "text": "Coding platforms / simulators", "style": "kinesthetic" }
+      ]
+    }
+  ],
+  "results": {
+    "visual": {
+      "title": "Visual Learner 👁️",
+      "description": "You learn best through images, diagrams, and spatial understanding.",
+      "recommendations": ["Video tutorials", "Concept diagrams", "Mind maps", "Visual summaries", "Infographics"],
+      "icon": "👁️"
+    },
+    "reading": {
+      "title": "Reading/Writing Learner 📚",
+      "description": "You excel when information is presented in written words and text-based formats.",
+      "recommendations": ["Detailed notes", "Textbook reading", "Written summaries", "Essay writing", "Lists and definitions"],
+      "icon": "📚"
+    },
+    "auditory": {
+      "title": "Auditory Learner 🎧",
+      "description": "You learn best through listening, discussions, and verbal explanations.",
+      "recommendations": ["Lecture recordings", "Group discussions", "Podcasts", "Teaching others", "Verbal repetition"],
+      "icon": "🎧"
+    },
+    "kinesthetic": {
+      "title": "Kinesthetic Learner 🤲",
+      "description": "You learn best through hands-on experience and physical engagement.",
+      "recommendations": ["Lab experiments", "Building projects", "Role-playing", "Interactive simulations", "Practice exercises"],
+      "icon": "🤲"
+    }
+  }
+}

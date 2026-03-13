@@ -1,0 +1,142 @@
+{
+  "interestQuestions": [
+    {
+      "id": 1,
+      "question": "What do you enjoy doing most?",
+      "options": [
+        { "text": "Writing code and solving problems", "tags": ["engineering", "data"] },
+        { "text": "Designing beautiful interfaces", "tags": ["design", "frontend"] },
+        { "text": "Analyzing data and finding patterns", "tags": ["data", "research"] },
+        { "text": "Teaching and explaining concepts", "tags": ["education", "communication"] }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "Which work environment appeals to you?",
+      "options": [
+        { "text": "Fast-paced startup", "tags": ["engineering", "frontend"] },
+        { "text": "Research lab or university", "tags": ["research", "data"] },
+        { "text": "Creative agency", "tags": ["design", "communication"] },
+        { "text": "Large tech corporation", "tags": ["engineering", "data"] }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "What kind of projects excite you?",
+      "options": [
+        { "text": "Building AI/ML models", "tags": ["data", "research"] },
+        { "text": "Creating web/mobile apps", "tags": ["engineering", "frontend"] },
+        { "text": "Crafting user experiences", "tags": ["design", "frontend"] },
+        { "text": "Writing documentation and guides", "tags": ["education", "communication"] }
+      ]
+    }
+  ],
+  "skills": [
+    "Programming", "Mathematics", "Communication", "Creativity",
+    "Data Analysis", "Problem Solving", "Leadership", "Design Thinking"
+  ],
+  "careers": {
+    "data": {
+      "title": "Data Science",
+      "emoji": "📊",
+      "icon": "TrendingUp",
+      "description": "Analyze complex data and drive business decisions",
+      "salary": "$120k - $180k",
+      "growth": "High",
+      "demand": 4,
+      "skills": ["Python", "SQL", "Machine Learning", "Statistics"],
+      "learningPath": [
+        { "step": 1, "duration": "1-2 Months", "title": "Fundamentals", "desc": "Learn the basics and core concepts" },
+        { "step": 2, "duration": "3-4 Months", "title": "Intermediate Skills", "desc": "Build practical projects" },
+        { "step": 3, "duration": "5-6 Months", "title": "Advanced Topics", "desc": "Master specialized areas" },
+        { "step": 4, "duration": "6+ Months", "title": "Portfolio & Practice", "desc": "Build real-world projects" }
+      ],
+      "courses": ["Machine Learning Basics", "Data Visualization with Python", "Statistics 101"]
+    },
+    "engineering": {
+      "title": "Web Development",
+      "emoji": "💻",
+      "icon": "BookOpen",
+      "description": "Build modern web applications and digital experiences",
+      "salary": "$90k - $150k",
+      "growth": "High",
+      "demand": 5,
+      "skills": ["JavaScript", "React", "Node.js", "TypeScript"],
+      "learningPath": [
+        { "step": 1, "duration": "1-2 Months", "title": "Fundamentals", "desc": "HTML, CSS, JavaScript basics" },
+        { "step": 2, "duration": "3-4 Months", "title": "Intermediate Skills", "desc": "React and modern frameworks" },
+        { "step": 3, "duration": "5-6 Months", "title": "Advanced Topics", "desc": "Full-stack development" },
+        { "step": 4, "duration": "6+ Months", "title": "Portfolio & Practice", "desc": "Build real-world projects" }
+      ],
+      "courses": ["Full Stack Development", "System Design Fundamentals", "Cloud Computing"]
+    },
+    "design": {
+      "title": "UX/UI Design",
+      "emoji": "🎨",
+      "icon": "BookOpen",
+      "description": "Create intuitive and beautiful digital experiences",
+      "salary": "$85k - $140k",
+      "growth": "Medium",
+      "demand": 3,
+      "skills": ["Figma", "User Research", "Prototyping", "Visual Design"],
+      "learningPath": [
+        { "step": 1, "duration": "1-2 Months", "title": "Fundamentals", "desc": "Design principles and basics" },
+        { "step": 2, "duration": "3-4 Months", "title": "Intermediate Skills", "desc": "Master design tools" },
+        { "step": 3, "duration": "5-6 Months", "title": "Advanced Topics", "desc": "UX research and strategy" },
+        { "step": 4, "duration": "6+ Months", "title": "Portfolio & Practice", "desc": "Build real-world projects" }
+      ],
+      "courses": ["UI Design Masterclass", "UX Research Methods", "Design Systems"]
+    },
+    "research": {
+      "title": "AI/Machine Learning",
+      "emoji": "🧠",
+      "icon": "User",
+      "description": "Push the boundaries of artificial intelligence",
+      "salary": "$140k - $220k",
+      "growth": "Very High",
+      "demand": 5,
+      "skills": ["Deep Learning", "Mathematics", "Research Writing", "PyTorch"],
+      "learningPath": [
+        { "step": 1, "duration": "1-2 Months", "title": "Fundamentals", "desc": "Math and programming foundations" },
+        { "step": 2, "duration": "3-4 Months", "title": "Intermediate Skills", "desc": "ML algorithms and frameworks" },
+        { "step": 3, "duration": "5-6 Months", "title": "Advanced Topics", "desc": "Deep learning and research" },
+        { "step": 4, "duration": "6+ Months", "title": "Portfolio & Practice", "desc": "Build real-world projects" }
+      ],
+      "courses": ["Deep Learning Specialization", "Research Methodology", "Advanced Mathematics"]
+    },
+    "product": {
+      "title": "Product Management",
+      "emoji": "📋",
+      "icon": "Target",
+      "description": "Lead product strategy and development teams",
+      "salary": "$130k - $200k",
+      "growth": "High",
+      "demand": 4,
+      "skills": ["Strategy", "Analytics", "Communication", "Leadership"],
+      "learningPath": [
+        { "step": 1, "duration": "1-2 Months", "title": "Fundamentals", "desc": "Product thinking basics" },
+        { "step": 2, "duration": "3-4 Months", "title": "Intermediate Skills", "desc": "Roadmapping and analytics" },
+        { "step": 3, "duration": "5-6 Months", "title": "Advanced Topics", "desc": "Strategy and leadership" },
+        { "step": 4, "duration": "6+ Months", "title": "Portfolio & Practice", "desc": "Build real-world projects" }
+      ],
+      "courses": ["Product Strategy", "Data-Driven PM", "Agile Management"]
+    },
+    "cloud": {
+      "title": "Cloud Engineering",
+      "emoji": "☁️",
+      "icon": "TrendingUp",
+      "description": "Design and manage cloud infrastructure at scale",
+      "salary": "$110k - $180k",
+      "growth": "High",
+      "demand": 4,
+      "skills": ["AWS", "Docker", "Kubernetes", "Terraform"],
+      "learningPath": [
+        { "step": 1, "duration": "1-2 Months", "title": "Fundamentals", "desc": "Cloud basics and networking" },
+        { "step": 2, "duration": "3-4 Months", "title": "Intermediate Skills", "desc": "Containers and orchestration" },
+        { "step": 3, "duration": "5-6 Months", "title": "Advanced Topics", "desc": "Infrastructure as code" },
+        { "step": 4, "duration": "6+ Months", "title": "Portfolio & Practice", "desc": "Build real-world projects" }
+      ],
+      "courses": ["AWS Certified Solutions Architect", "Docker & Kubernetes", "DevOps Fundamentals"]
+    }
+  }
+}

@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 24 18% 89%;
+    --foreground: 240 10% 15%;
+    --card: 232 30% 92%;
+    --card-foreground: 240 10% 15%;
+    --popover: 232 30% 92%;
+    --popover-foreground: 240 10% 15%;
+    --primary: 197 25% 72%;
+    --primary-foreground: 240 10% 15%;
+    --secondary: 210 55% 86%;
+    --secondary-foreground: 240 10% 15%;
+    --muted: 24 18% 85%;
+    --muted-foreground: 240 5% 45%;
+    --accent: 47 80% 83%;
+    --accent-foreground: 240 10% 15%;
+    --destructive: 0 40% 82%;
+    --destructive-foreground: 0 60% 30%;
+    --border: 232 20% 85%;
+    --input: 232 20% 85%;
+    --ring: 197 25% 62%;
+    --radius: 0.75rem;
+
+    --sidebar-background: 232 30% 94%;
+    --sidebar-foreground: 240 10% 25%;
+    --sidebar-primary: 197 25% 62%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 55% 90%;
+    --sidebar-accent-foreground: 240 10% 15%;
+    --sidebar-border: 232 20% 85%;
+    --sidebar-ring: 197 25% 62%;
+
+    --highlight: 210 55% 86%;
+    --badge: 47 80% 83%;
+    --rose: 0 40% 82%;
+    --glass: 232 30% 92%;
+
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  .dark {
+    --background: 240 10% 10%;
+    --foreground: 24 18% 89%;
+    --card: 240 10% 15%;
+    --card-foreground: 24 18% 85%;
+    --popover: 240 10% 15%;
+    --popover-foreground: 24 18% 85%;
+    --primary: 197 30% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 30% 25%;
+    --secondary-foreground: 210 55% 86%;
+    --muted: 240 8% 18%;
+    --muted-foreground: 24 10% 65%;
+    --accent: 47 50% 40%;
+    --accent-foreground: 47 80% 90%;
+    --destructive: 0 40% 35%;
+    --destructive-foreground: 0 40% 90%;
+    --border: 240 8% 22%;
+    --input: 240 8% 22%;
+    --ring: 197 30% 50%;
+
+    --sidebar-background: 240 10% 12%;
+    --sidebar-foreground: 24 10% 80%;
+    --sidebar-primary: 197 30% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 8% 20%;
+    --sidebar-accent-foreground: 24 10% 85%;
+    --sidebar-border: 240 8% 20%;
+    --sidebar-ring: 197 30% 50%;
+
+    --highlight: 210 30% 25%;
+    --badge: 47 50% 35%;
+    --rose: 0 30% 30%;
+    --glass: 240 10% 16%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-card/70 backdrop-blur-xl border border-border/50 shadow-lg;
+  }
+  .glass-card-strong {
+    @apply bg-card/90 backdrop-blur-2xl border border-border/60 shadow-xl;
+  }
+  .gradient-hero {
+    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--card)), hsl(var(--highlight)));
+  }
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  }
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--badge)));
+  }
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--primary)));
+  }
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+  .hover-glow:hover {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.4);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.6);
+}
+
+/* Dark mode transition */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
