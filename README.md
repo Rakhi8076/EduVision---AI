@@ -53,7 +53,7 @@ An intelligent chatbot that assists students with learning guidance, doubts, and
 
 ### Backend
 
-* Node.js / Python (depending on implementation)
+*  Python 
 
 ### AI / ML
 
