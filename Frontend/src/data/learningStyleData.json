@@ -10,24 +10,25 @@
         { "text": "Hands-on practice and experiments", "style": "kinesthetic" }
       ]
     },
+ 
     {
       "id": 2,
-      "question": "When studying for an exam, you usually…",
-      "options": [
-        { "text": "Create mind maps and charts", "style": "visual" },
-        { "text": "Re-read textbooks and notes", "style": "reading" },
-        { "text": "Discuss topics with friends", "style": "auditory" },
-        { "text": "Practice problems repeatedly", "style": "kinesthetic" }
-      ]
-    },
-    {
-      "id": 3,
       "question": "What helps you remember information best?",
       "options": [
         { "text": "Color-coded highlights and images", "style": "visual" },
         { "text": "Written summaries", "style": "reading" },
         { "text": "Recording and replaying explanations", "style": "auditory" },
         { "text": "Building projects or models", "style": "kinesthetic" }
+      ]
+    },
+       {
+      "id": 3,
+      "question": "When studying for an exam, you usually…",
+      "options": [
+        { "text": "Create mind maps and charts", "style": "visual" },
+        { "text": "Re-read textbooks and notes", "style": "reading" },
+        { "text": "Discuss topics with friends", "style": "auditory" },
+        { "text": "Practice problems repeatedly", "style": "kinesthetic" }
       ]
     },
     {
@@ -40,34 +41,15 @@
         { "text": "Build the prototype", "style": "kinesthetic" }
       ]
     },
+   
     {
       "id": 5,
-      "question": "Your ideal study environment is…",
+      "question": "When learning something new, you…",
       "options": [
-        { "text": "A clean desk with visual aids on the wall", "style": "visual" },
-        { "text": "A quiet library with books", "style": "reading" },
-        { "text": "Background music or study group", "style": "auditory" },
-        { "text": "A lab or workshop", "style": "kinesthetic" }
-      ]
-    },
-    {
-      "id": 6,
-      "question": "When explaining something complex, you…",
-      "options": [
-        { "text": "Draw a diagram", "style": "visual" },
-        { "text": "Write step-by-step instructions", "style": "reading" },
-        { "text": "Explain it verbally with analogies", "style": "auditory" },
-        { "text": "Demonstrate it physically", "style": "kinesthetic" }
-      ]
-    },
-    {
-      "id": 7,
-      "question": "Which app would you use most for studying?",
-      "options": [
-        { "text": "Canva / Miro for visuals", "style": "visual" },
-        { "text": "Notion / Google Docs", "style": "reading" },
-        { "text": "Spotify podcasts / YouTube lectures", "style": "auditory" },
-        { "text": "Coding platforms / simulators", "style": "kinesthetic" }
+        { "text": "Watch tutorials or demos", "style": "visual" },
+        { "text": "Read guides or documentation", "style": "reading" },
+        { "text": "Listen to explanations", "style": "auditory" },
+        { "text": "Try it yourself step-by-step", "style": "kinesthetic" }
       ]
     }
   ],
