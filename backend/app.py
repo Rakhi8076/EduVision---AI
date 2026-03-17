@@ -1,15 +1,71 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from transformers import pipeline
+from fastapi.middleware.cors import CORSMiddleware
+from groq import Groq
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+# ✅ CORS CONFIG
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8080",
+        "http://127.0.0.1:8080",
+        "http://192.168.29.193:8080"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+# ✅ GET API KEY
+api_key = os.getenv("GROQ_API_KEY")
+
+if not api_key:
+    raise ValueError("❌ GROQ_API_KEY not found in .env file")
+
+# ✅ INIT CLIENT
+client = Groq(api_key=api_key)
+
+# ✅ Request Model
 class TextInput(BaseModel):
     text: str
 
+# ✅ Root Route
+@app.get("/")
+def home():
+    return {"message": "EduVision AI Backend Running 🚀"}
+
+# ✅ Summarizer API
 @app.post("/summarize")
 def summarize(data: TextInput):
-    summary = summarizer(data.text, max_length=120, min_length=30, do_sample=False)
-    return {"summary": summary[0]["summary_text"]}
+    try:
+        prompt = f"""
+        Summarize the following text into:
+        - Clear bullet points
+        - Key concepts
+
+        Text:
+        {data.text}
+        """
+
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": "You are a helpful AI tutor."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.5
+        )
+
+        summary = response.choices[0].message.content
+
+        return {"summary": summary}
+
+    except Exception as e:
+        return {"error": str(e)}
