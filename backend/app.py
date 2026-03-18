@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from schemas.learning import Answers
 from ml.predictor import predict_learning_style
 from pydantic import BaseModel
@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from groq import Groq
 import os
 from dotenv import load_dotenv
+import PyPDF2
 
 # Load environment variables
 load_dotenv()
@@ -43,7 +44,7 @@ class TextInput(BaseModel):
 def home():
     return {"message": "EduVision AI Backend Running 🚀"}
 
-# ✅ Summarizer API
+# ✅ TEXT SUMMARIZER API
 @app.post("/summarize")
 def summarize(data: TextInput):
     try:
@@ -66,21 +67,64 @@ def summarize(data: TextInput):
         )
 
         summary = response.choices[0].message.content
+        return {"summary": summary}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ✅ PDF SUMMARIZER API (NEW 🔥)
+@app.post("/summarize-pdf")
+async def summarize_pdf(file: UploadFile = File(...)):
+    try:
+        # Read PDF
+        pdf_reader = PyPDF2.PdfReader(file.file)
+        text = ""
+
+        for page in pdf_reader.pages:
+            text += page.extract_text() or ""
+
+        if not text.strip():
+            return {"error": "No readable text found in PDF"}
+
+        # Limit text to avoid token overflow
+        text = text[:4000]
+
+        prompt = f"""
+        Summarize the following PDF content into:
+        - Clear bullet points
+        - Key concepts
+
+        Text:
+        {text}
+        """
+
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": "You are a helpful AI tutor."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.5
+        )
+
+        summary = response.choices[0].message.content
 
         return {"summary": summary}
 
     except Exception as e:
         return {"error": str(e)}
-    
+
+
 # ✅ Learning Style Prediction API
 @app.post("/predict-learning-style")
 def predict_style(data: Answers):
     try:
         result = predict_learning_style(data.answers)
         return {
-    "style": result["style"],
-    "description": result["description"],
-    "recommendations": result["recommendations"]
-}
+            "style": result["style"],
+            "description": result["description"],
+            "recommendations": result["recommendations"]
+        }
     except Exception as e:
         return {"error": str(e)}
