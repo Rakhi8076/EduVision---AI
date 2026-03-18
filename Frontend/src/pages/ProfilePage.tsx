@@ -1,9 +1,15 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { Mail, User, Award, Flame, Star } from "lucide-react";
 
 const ProfilePage = () => {
-  const user = getCurrentUser();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const data = getCurrentUser();
+    setUser(data);
+  }, []);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -61,6 +67,37 @@ const ProfilePage = () => {
               <div>
                 <p className="text-xs text-muted-foreground">Email</p>
                 <p className="text-sm font-medium">{user?.email || "student@example.com"}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+              <User className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <p className="text-xs text-muted-foreground">Age</p>
+                <p className="text-sm font-medium">{user?.age || "-"}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+              <User className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <p className="text-xs text-muted-foreground">Gender</p>
+                <p className="text-sm font-medium">{user?.gender || "-"}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+              <User className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <p className="text-xs text-muted-foreground">College</p>
+                <p className="text-sm font-medium">{user?.college || "-"}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
+              <User className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <p className="text-xs text-muted-foreground">Course</p>
+                <p className="text-sm font-medium">{user?.course || "-"}</p>
               </div>
             </div>
           </div>

@@ -7,9 +7,22 @@ from groq import Groq
 import os
 from dotenv import load_dotenv
 import PyPDF2
+from jose import jwt
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
+from auth import create_token   # 👈 tumhara auth.py
+import hashlib
+from sqlalchemy.orm import Session
+from database import SessionLocal, engine
+import PyPDF2
+import models
+
+models.Base.metadata.create_all(bind=engine)
 
 # Load environment variables
 load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 app = FastAPI()
 
@@ -25,6 +38,27 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("user_id")
+        user = db.query(models.User).filter(models.User.id == user_id).first()
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user   # ✅ full user object return
+    except:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 # ✅ GET API KEY
 api_key = os.getenv("GROQ_API_KEY")
@@ -128,3 +162,68 @@ def predict_style(data: Answers):
         }
     except Exception as e:
         return {"error": str(e)}
+    
+##✅ AUTH MODELS
+class LoginInput(BaseModel):
+    email: str
+    password: str
+class SignupInput(BaseModel):
+    name: str
+    email: str
+    password: str
+    age: int
+    gender: str
+    college: str
+    course: str
+
+##✅ SIGNUP API
+@app.post("/signup")
+def signup(data: SignupInput, db: Session = Depends(get_db)):
+    existing_user = db.query(models.User).filter(models.User.email == data.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already exists")
+    hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
+    new_user = models.User(
+    name=data.name,
+    email=data.email,
+    password=hashed_password,
+    age=data.age,
+    gender=data.gender,
+    college=data.college,
+    course=data.course
+)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"message": "User created successfully"}
+
+## ✅ LOGIN API
+@app.post("/login")
+def login(data: LoginInput, db: Session = Depends(get_db)):
+    hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
+    user = db.query(models.User).filter(models.User.email == data.email).first()
+    if not user or user.password != hashed_password:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    token = create_token({"user_id": user.id})
+    return {"access_token": token}
+
+##✅ PROFILE API
+@app.get("/profile")
+def profile(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    return {
+    "name": user.name,
+    "email": user.email,
+    "xp": user.xp,
+    "streak": user.streak,
+  
+    "age": user.age,
+    "gender": user.gender,
+    "college": user.college,
+    "course": user.course
+}
+
+##✅ GET CURRENT USER DATA
+@app.get("/me")
+def get_current_user_data(current_user: models.User = Depends(get_current_user)):
+    return current_user

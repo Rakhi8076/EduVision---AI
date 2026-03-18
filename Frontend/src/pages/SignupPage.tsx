@@ -1,30 +1,53 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Moon, Sun } from "lucide-react";
 import { signup } from "@/lib/auth";
 import { useTheme } from "@/components/ThemeProvider";
-import { Moon, Sun } from "lucide-react";
 
 const SignupPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+
+  // ✅ NEW FIELDS
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [college, setCollege] = useState("");
+  const [course, setCourse] = useState("");
+
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!name || !email || !password || !confirm) { setError("Please fill in all fields"); return; }
-    if (password.length < 6) { setError("Password must be at least 6 characters"); return; }
-    if (password !== confirm) { setError("Passwords do not match"); return; }
+
+    // ✅ VALIDATION UPDATED
+    if (!name || !email || !password || !confirm || !age || !gender || !college || !course) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    if (password !== confirm) {
+      setError("Passwords do not match");
+      return;
+    }
+
     try {
-      signup(name, email, password);
+      // ✅ UPDATED SIGNUP CALL
+      await signup(name, email, password, age, gender, college, course);
+
       setSuccess(true);
       setTimeout(() => navigate("/login"), 1500);
     } catch (err: any) {
@@ -37,6 +60,7 @@ const SignupPage = () => {
       <button onClick={toggleTheme} className="absolute top-4 right-4 p-2 rounded-lg glass-card">
         {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
       </button>
+
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Home
@@ -50,47 +74,106 @@ const SignupPage = () => {
           </div>
 
           {error && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 p-3 rounded-xl bg-destructive/20 text-destructive-foreground text-sm">{error}</motion.div>
+            <motion.div className="mb-4 p-3 rounded-xl bg-destructive/20 text-sm">
+              {error}
+            </motion.div>
           )}
+
           {success && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 p-3 rounded-xl bg-accent/40 text-sm font-medium">
-              ✅ Account created! Redirecting to login...
+            <motion.div className="mb-4 p-3 rounded-xl bg-accent/40 text-sm font-medium">
+              ✅ Account created! Redirecting...
             </motion.div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-1 block">Full Name</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Nandini Sharma"
-                className="w-full px-4 py-3 rounded-xl bg-muted border border-border/50 outline-none focus:ring-2 focus:ring-ring/30 text-sm" />
+
+            {/* NAME */}
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-muted border outline-none"
+            />
+
+            {/* EMAIL */}
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-muted border outline-none"
+            />
+
+            {/* PASSWORD */}
+            <div className="relative">
+              <input
+                type={showPw ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-muted border outline-none pr-10"
+              />
+              <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-3">
+                {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
-            <div>
-              <label className="text-sm font-medium mb-1 block">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"
-                className="w-full px-4 py-3 rounded-xl bg-muted border border-border/50 outline-none focus:ring-2 focus:ring-ring/30 text-sm" />
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-1 block">Password</label>
-              <div className="relative">
-                <input type={showPw ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 6 characters"
-                  className="w-full px-4 py-3 rounded-xl bg-muted border border-border/50 outline-none focus:ring-2 focus:ring-ring/30 text-sm pr-10" />
-                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-1 block">Confirm Password</label>
-              <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="••••••"
-                className="w-full px-4 py-3 rounded-xl bg-muted border border-border/50 outline-none focus:ring-2 focus:ring-ring/30 text-sm" />
-            </div>
-            <button type="submit" className="w-full py-3 rounded-xl gradient-primary font-semibold hover-lift transition-all">
+
+            {/* CONFIRM */}
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirm}
+              onChange={e => setConfirm(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-muted border outline-none"
+            />
+
+            {/* AGE */}
+            <input
+              type="number"
+              placeholder="Age"
+              value={age}
+              onChange={e => setAge(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-muted border outline-none"
+            />
+
+            {/* GENDER */}
+            <select
+              value={gender}
+              onChange={e => setGender(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-muted border outline-none"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+
+            {/* COLLEGE */}
+            <input
+              type="text"
+              placeholder="College"
+              value={college}
+              onChange={e => setCollege(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-muted border outline-none"
+            />
+
+            {/* COURSE */}
+            <input
+              type="text"
+              placeholder="Course / Branch"
+              value={course}
+              onChange={e => setCourse(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-muted border outline-none"
+            />
+
+            <button className="w-full py-3 rounded-xl gradient-primary font-semibold">
               Create Account
             </button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Already have an account? <Link to="/login" className="text-primary font-medium hover:underline">Sign In</Link>
+          <p className="text-center text-sm mt-6">
+            Already have an account? <Link to="/login" className="text-primary">Login</Link>
           </p>
         </div>
       </motion.div>
@@ -99,3 +182,4 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
+
