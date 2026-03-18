@@ -1,4 +1,7 @@
 fastapi
 uvicorn
-transformers
-torch
+python-dotenv
+groq
+sentence-transformers
+PyPDF2
+python-multipart
