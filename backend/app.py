@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from schemas.learning import Answers
+from ml.predictor import predict_learning_style
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from groq import Groq
@@ -67,5 +69,18 @@ def summarize(data: TextInput):
 
         return {"summary": summary}
 
+    except Exception as e:
+        return {"error": str(e)}
+    
+# ✅ Learning Style Prediction API
+@app.post("/predict-learning-style")
+def predict_style(data: Answers):
+    try:
+        result = predict_learning_style(data.answers)
+        return {
+    "style": result["style"],
+    "description": result["description"],
+    "recommendations": result["recommendations"]
+}
     except Exception as e:
         return {"error": str(e)}

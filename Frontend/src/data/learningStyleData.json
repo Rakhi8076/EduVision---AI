@@ -4,97 +4,71 @@
       "id": 1,
       "question": "How do you prefer learning new concepts?",
       "options": [
-        { "text": "Watching videos or diagrams", "style": "visual" },
-        { "text": "Reading detailed notes", "style": "reading" },
-        { "text": "Listening to lectures or podcasts", "style": "auditory" },
-        { "text": "Hands-on practice and experiments", "style": "kinesthetic" }
+        { "text": "Watching videos or diagrams" },
+        { "text": "Reading detailed notes" },
+        { "text": "Listening to lectures or podcasts" },
+        { "text": "Doing hands-on practice and real experiments" }
       ]
     },
     {
       "id": 2,
       "question": "When studying for an exam, you usually…",
       "options": [
-        { "text": "Create mind maps and charts", "style": "visual" },
-        { "text": "Re-read textbooks and notes", "style": "reading" },
-        { "text": "Discuss topics with friends", "style": "auditory" },
-        { "text": "Practice problems repeatedly", "style": "kinesthetic" }
+        { "text": "Creating mind maps and charts" },
+        { "text": "Re-reading textbooks and notes" },
+        { "text": "Discussing topics with friends" },
+        { "text": "Solving problems by doing practice repeatedly" }
       ]
     },
     {
       "id": 3,
       "question": "What helps you remember information best?",
       "options": [
-        { "text": "Color-coded highlights and images", "style": "visual" },
-        { "text": "Written summaries", "style": "reading" },
-        { "text": "Recording and replaying explanations", "style": "auditory" },
-        { "text": "Building projects or models", "style": "kinesthetic" }
+        { "text": "Using color-coded highlights and images" },
+        { "text": "Writing summaries and notes" },
+        { "text": "Recording and listening to explanations" },
+        { "text": "Building projects and working with real models" }
       ]
     },
     {
       "id": 4,
       "question": "In a group project, you prefer to…",
       "options": [
-        { "text": "Design the presentation slides", "style": "visual" },
-        { "text": "Write the report", "style": "reading" },
-        { "text": "Present and explain to the team", "style": "auditory" },
-        { "text": "Build the prototype", "style": "kinesthetic" }
+        { "text": "Designing presentation slides" },
+        { "text": "Writing detailed reports" },
+        { "text": "Presenting and explaining to the team" },
+        { "text": "Building and testing a real working prototype" }
       ]
     },
     {
       "id": 5,
       "question": "Your ideal study environment is…",
       "options": [
-        { "text": "A clean desk with visual aids on the wall", "style": "visual" },
-        { "text": "A quiet library with books", "style": "reading" },
-        { "text": "Background music or study group", "style": "auditory" },
-        { "text": "A lab or workshop", "style": "kinesthetic" }
+        { "text": "A clean desk with visual aids on the wall" },
+        { "text": "A quiet place with books and notes" },
+        { "text": "Background music or study group discussions" },
+        { "text": "Working in a lab and doing practical activities" }
       ]
     },
     {
       "id": 6,
       "question": "When explaining something complex, you…",
       "options": [
-        { "text": "Draw a diagram", "style": "visual" },
-        { "text": "Write step-by-step instructions", "style": "reading" },
-        { "text": "Explain it verbally with analogies", "style": "auditory" },
-        { "text": "Demonstrate it physically", "style": "kinesthetic" }
+        { "text": "Drawing diagrams to explain" },
+        { "text": "Writing step-by-step explanations" },
+        { "text": "Explaining verbally with examples" },
+        { "text": "Physically doing and demonstrating the concept" }
       ]
     },
     {
       "id": 7,
       "question": "Which app would you use most for studying?",
       "options": [
-        { "text": "Canva / Miro for visuals", "style": "visual" },
-        { "text": "Notion / Google Docs", "style": "reading" },
-        { "text": "Spotify podcasts / YouTube lectures", "style": "auditory" },
-        { "text": "Coding platforms / simulators", "style": "kinesthetic" }
+        { "text": "Canva or Miro for visual content" },
+        { "text": "Notion or Google Docs for writing notes" },
+        { "text": "Spotify podcasts or YouTube lectures" },
+        { "text": "Practicing coding by building real projects and simulations" }
       ]
     }
-  ],
-  "results": {
-    "visual": {
-      "title": "Visual Learner 👁️",
-      "description": "You learn best through images, diagrams, and spatial understanding.",
-      "recommendations": ["Video tutorials", "Concept diagrams", "Mind maps", "Visual summaries", "Infographics"],
-      "icon": "👁️"
-    },
-    "reading": {
-      "title": "Reading/Writing Learner 📚",
-      "description": "You excel when information is presented in written words and text-based formats.",
-      "recommendations": ["Detailed notes", "Textbook reading", "Written summaries", "Essay writing", "Lists and definitions"],
-      "icon": "📚"
-    },
-    "auditory": {
-      "title": "Auditory Learner 🎧",
-      "description": "You learn best through listening, discussions, and verbal explanations.",
-      "recommendations": ["Lecture recordings", "Group discussions", "Podcasts", "Teaching others", "Verbal repetition"],
-      "icon": "🎧"
-    },
-    "kinesthetic": {
-      "title": "Kinesthetic Learner 🤲",
-      "description": "You learn best through hands-on experience and physical engagement.",
-      "recommendations": ["Lab experiments", "Building projects", "Role-playing", "Interactive simulations", "Practice exercises"],
-      "icon": "🤲"
-    }
-  }
+  ]
 }
