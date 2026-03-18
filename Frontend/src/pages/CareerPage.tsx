@@ -1,139 +1,461 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import careerData from "@/data/careerData.json";
-import { TrendingUp, BookOpen, Target, User, Compass } from "lucide-react";
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { useCareerStore } from "@/store/useCareerStore"
+import {
+  TrendingUp, Compass, ArrowRight, ArrowLeft,
+  Loader2, RotateCcw, BadgeCheck
+} from "lucide-react"
 
-const iconMap: Record<string, any> = { TrendingUp, BookOpen, Target, User };
+const questions = [
+  {
+    type: "R",
+    text: "How much do you enjoy building, fixing, or working with tools and machines?",
+  },
+  {
+    type: "I",
+    text: "How much do you enjoy analysing data, solving complex problems, or doing research?",
+  },
+  {
+    type: "A",
+    text: "How much do you enjoy creative activities like design, writing, or art?",
+  },
+  {
+    type: "S",
+    text: "How much do you enjoy helping, teaching, or working closely with people?",
+  },
+  {
+    type: "E",
+    text: "How much do you enjoy leading teams, starting ventures, or persuading others?",
+  },
+  {
+    type: "C",
+    text: "How much do you enjoy organising, managing records, or working with structured systems?",
+  },
+]
 
-type CareerKey = keyof typeof careerData.careers;
+const RIASEC_LABELS: Record<string, string> = {
+  R: "Realistic",
+  I: "Investigative",
+  A: "Artistic",
+  S: "Social",
+  E: "Enterprising",
+  C: "Conventional",
+}
 
-const allCareers = Object.entries(careerData.careers) as [CareerKey, typeof careerData.careers[CareerKey]][];
+const RATING_LABELS: Record<number, string> = {
+  1: "Not at all",
+  2: "A little",
+  3: "Somewhat",
+  4: "Quite a bit",
+  5: "Absolutely",
+}
 
-const CareerPage = () => {
-  const [selected, setSelected] = useState<CareerKey>("data");
-  const career = careerData.careers[selected];
-  const IconComponent = iconMap[career.icon] || TrendingUp;
+const parseStep = (content: string, step: number) => {
+  const colonIdx = content.indexOf(":")
+  if (colonIdx === -1) return { step, duration: "", title: content, desc: "" }
+  const duration = content.substring(0, colonIdx).trim()
+  const rest = content.substring(colonIdx + 1).trim()
+  const dashIdx = rest.indexOf(" - ")
+  return {
+    step,
+    duration,
+    title: dashIdx !== -1 ? rest.substring(0, dashIdx).trim() : rest,
+    desc: dashIdx !== -1 ? rest.substring(dashIdx + 3).trim() : "",
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// QUIZ VIEW
+// ══════════════════════════════════════════════════════════════
+const QuizView = ({ onComplete }: { onComplete: () => void }) => {
+  const setResults = useCareerStore((s) => s.setResults)
+  const [current, setCurrent] = useState(0)
+  const [ratings, setRatings] = useState<Record<number, number>>({})
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const currentRating = ratings[current] ?? null
+  const progress = Math.round(((current + 1) / questions.length) * 100)
+  const isLast = current === questions.length - 1
+  const allAnswered = Object.keys(ratings).length === questions.length
+
+  const handleRate = (val: number) =>
+    setRatings((prev) => ({ ...prev, [current]: val }))
+
+  const handleSubmit = async () => {
+    // rating 1-5 × 2 = 2-10, fits validate_scores (0 <= x <= 10)
+    const scores = questions.map((_, i) => (ratings[i] ?? 1) * 2)
+
+    setLoading(true)
+    setError("")
+    try {
+      const res = await fetch("http://localhost:8000/predict-career", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scores }),
+      })
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+      setResults(data.main_career, data.other_careers)
+      onComplete()
+    } catch (e: any) {
+      setError(e.message || "Something went wrong. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <div className="max-w-6xl space-y-8">
+    <div className="max-w-2xl mx-auto space-y-8">
+
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
             <Compass className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold">Career Path Guidance</h1>
-            <p className="text-muted-foreground text-sm">Explore career paths tailored to your skills and interests</p>
+            <h1 className="font-display text-2xl font-bold">Career Discovery Quiz</h1>
+            <p className="text-muted-foreground text-sm">
+              Rate each area to find your ideal career path
+            </p>
           </div>
         </div>
       </motion.div>
 
-      {/* Featured Career Card */}
-      <motion.div
-        key={selected}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass-card rounded-2xl p-8 bg-secondary/30"
-      >
-        <div className="flex items-center gap-3 mb-4">
-          <IconComponent className="w-7 h-7 text-primary" />
-          <h2 className="font-display text-2xl font-bold">{career.title}</h2>
-        </div>
-        <p className="text-muted-foreground mb-6">{career.description}</p>
-
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          <div>
-            <p className="text-sm text-muted-foreground">Salary Range</p>
-            <p className="font-display text-xl font-bold">{career.salary}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Job Growth</p>
-            <p className="font-display text-xl font-bold text-primary">{career.growth}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Demand</p>
-            <div className="flex gap-1 mt-1">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-5 h-6 rounded-sm ${i < career.demand ? "bg-foreground" : "bg-muted"}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <p className="text-sm text-muted-foreground mb-3">Key Skills Required:</p>
-          <div className="flex flex-wrap gap-2">
-            {career.skills.map((s) => (
-              <span key={s} className="px-4 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-sm font-medium">
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Other Career Paths */}
+      {/* Progress */}
       <div>
-        <h3 className="font-display text-xl font-bold mb-4">Other Career Paths</h3>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {allCareers.map(([key, c]) => {
-            const Icon = iconMap[c.icon] || TrendingUp;
-            return (
-              <motion.button
-                key={key}
-                whileHover={{ y: -3 }}
-                onClick={() => setSelected(key)}
-                className={`glass-card rounded-2xl p-5 text-left transition-all ${
-                  selected === key ? "ring-2 ring-primary" : "hover:shadow-lg"
-                }`}
-              >
-                <Icon className="w-6 h-6 mb-3 text-primary" />
-                <p className="font-display font-bold">{c.title}</p>
-                <p className="text-sm text-primary mt-1">{c.salary}</p>
-              </motion.button>
-            );
-          })}
+        <div className="flex justify-between text-xs text-muted-foreground mb-2">
+          <span>Question {current + 1} of {questions.length}</span>
+          <span>{progress}%</span>
+        </div>
+        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-foreground rounded-full"
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.3 }}
+          />
         </div>
       </div>
 
-      {/* Learning Path Roadmap */}
-      <motion.div
-        key={`path-${selected}`}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass-card rounded-2xl p-8"
-      >
-        <h3 className="font-display text-xl font-bold mb-6">Recommended Learning Path:</h3>
-        <div className="space-y-0">
-          {career.learningPath.map((step, i) => (
-            <div key={i} className="flex gap-5">
-              <div className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded-xl bg-foreground text-background flex items-center justify-center font-display font-bold shrink-0">
-                  {step.step}
-                </div>
-                {i < career.learningPath.length - 1 && (
-                  <div className="w-0.5 h-12 bg-border" />
-                )}
-              </div>
-              <div className="pb-8">
-                <p className="text-sm text-primary">{step.duration}</p>
-                <p className="font-display font-bold">{step.title}</p>
-                <p className="text-sm text-muted-foreground">{step.desc}</p>
-              </div>
+      {/* Question Card */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -40 }}
+          transition={{ duration: 0.22 }}
+          className="glass-card rounded-2xl p-8 space-y-8"
+        >
+          <div>
+            <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-3">
+              {questions[current].type} — {RIASEC_LABELS[questions[current].type]}
+            </p>
+            <h2 className="font-display text-xl font-bold leading-snug">
+              {questions[current].text}
+            </h2>
+            <p className="text-xs text-muted-foreground mt-2">
+              1 = Not at all · 5 = Absolutely love it
+            </p>
+          </div>
+
+          {/* Rating buttons */}
+          <div className="space-y-3">
+            <div className="flex justify-between gap-2">
+              {[1, 2, 3, 4, 5].map((val) => (
+                <button
+                  key={val}
+                  onClick={() => handleRate(val)}
+                  className={`flex-1 py-4 rounded-xl border text-lg font-bold transition-all
+                    ${currentRating === val
+                      ? "border-foreground bg-foreground text-background scale-105"
+                      : "border-border bg-secondary/20 hover:border-foreground/40 hover:bg-secondary/40"
+                    }`}
+                >
+                  {val}
+                </button>
+              ))}
             </div>
+
+            {/* Selected label */}
+            <div className="text-center h-5">
+              <AnimatePresence mode="wait">
+                {currentRating && (
+                  <motion.p
+                    key={currentRating}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-sm text-primary font-medium"
+                  >
+                    {RATING_LABELS[currentRating]}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Dot navigation */}
+          <div className="flex justify-center gap-2">
+            {questions.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === current
+                    ? "bg-foreground w-4"
+                    : ratings[i] !== undefined
+                    ? "bg-foreground/50 w-2"
+                    : "bg-muted w-2"
+                }`}
+              />
+            ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Error */}
+      {error && (
+        <p className="text-red-500 text-sm text-center bg-red-500/10 py-3 px-4 rounded-xl">
+          {error}
+        </p>
+      )}
+
+      {/* Navigation */}
+      <div className="flex justify-between">
+        <button
+          onClick={() => setCurrent((c) => c - 1)}
+          disabled={current === 0}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-medium disabled:opacity-30 hover:bg-secondary/40 transition-all"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back
+        </button>
+
+        {!isLast ? (
+          <button
+            onClick={() => setCurrent((c) => c + 1)}
+            disabled={currentRating === null}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold disabled:opacity-30 hover:opacity-90 transition-all"
+          >
+            Next <ArrowRight className="w-4 h-4" />
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={!allAnswered || loading}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold disabled:opacity-30 hover:opacity-90 transition-all"
+          >
+            {loading
+              ? <><Loader2 className="w-4 h-4 animate-spin" /> Analysing...</>
+              : <>Find my career <ArrowRight className="w-4 h-4" /></>
+            }
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════════════
+// RESULTS VIEW
+// ══════════════════════════════════════════════════════════════
+const ResultsView = ({ onRetake }: { onRetake: () => void }) => {
+  const { mainCareer, otherCareers } = useCareerStore()
+  const [selectedOtherIdx, setSelectedOtherIdx] = useState<number | null>(null)
+
+  if (!mainCareer) return null
+
+  // If user clicked an other career, show that — else show main
+  const career = selectedOtherIdx !== null ? otherCareers[selectedOtherIdx] : mainCareer
+  const parsedPath = career.learning_path.map((lp) => parseStep(lp.content, lp.step))
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-6xl space-y-8"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
+            <Compass className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="font-display text-2xl md:text-3xl font-bold">
+              Career Path Guidance
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Personalised result ·{" "}
+              <span className="text-primary font-medium">
+                {mainCareer.confidence}% match confidence
+              </span>
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={onRetake}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-medium hover:bg-secondary/40 transition-all"
+        >
+          <RotateCcw className="w-4 h-4" /> Retake Quiz
+        </button>
+      </div>
+
+      {/* Featured Career — main by default, switches on click */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`career-${selectedOtherIdx}`}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card rounded-2xl p-8 bg-secondary/30"
+        >
+          <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <TrendingUp className="w-7 h-7 text-primary" />
+            <h2 className="font-display text-2xl font-bold">{career.career}</h2>
+            {selectedOtherIdx === null && (
+              <span className="flex items-center gap-1 ml-auto text-xs px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary font-medium">
+                <BadgeCheck className="w-3.5 h-3.5" /> Best match
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 mb-8">
+            <div>
+              <p className="text-sm text-muted-foreground">Salary Range</p>
+              <p className="font-display text-xl font-bold">{career.salary}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Match Confidence</p>
+              <p className="font-display text-xl font-bold text-primary">
+                {career.confidence}%
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm text-muted-foreground mb-3">Key Skills Required:</p>
+            <div className="flex flex-wrap gap-2">
+              {career.skills.map((s) => (
+                <span
+                  key={s}
+                  className="px-4 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-sm font-medium"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Other Career Paths — only 5 others, main not repeated */}
+      <div>
+        <h3 className="font-display text-xl font-bold mb-4">Other Career Paths</h3>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {otherCareers.map((c, idx) => (
+            <motion.button
+              key={idx}
+              whileHover={{ y: -3 }}
+              onClick={() => setSelectedOtherIdx(
+                selectedOtherIdx === idx ? null : idx
+              )}
+              className={`glass-card rounded-2xl p-5 text-left transition-all ${
+                selectedOtherIdx === idx ? "ring-2 ring-primary" : "hover:shadow-lg"
+              }`}
+            >
+              <TrendingUp className="w-6 h-6 mb-3 text-primary" />
+              <p className="font-display font-bold">{c.career}</p>
+              <p className="text-sm text-primary mt-1">{c.salary}</p>
+              <p className="text-xs text-muted-foreground mt-1">{c.confidence}% match</p>
+            </motion.button>
           ))}
         </div>
+      </div>
 
-        <button className="w-full py-3 rounded-xl bg-foreground text-background font-semibold hover-lift mt-4">
-          Get Personalized Roadmap
-        </button>
-      </motion.div>
-    </div>
-  );
-};
+      {/* Learning Path — updates when other career clicked */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`path-${selectedOtherIdx}`}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card rounded-2xl p-8"
+        >
+          <h3 className="font-display text-xl font-bold mb-6">
+            Recommended Learning Path:
+          </h3>
+          <div className="space-y-0">
+            {parsedPath.map((step, i) => (
+              <div key={i} className="flex gap-5">
+                <div className="flex flex-col items-center">
+                  <div className="w-10 h-10 rounded-xl bg-foreground text-background flex items-center justify-center font-display font-bold shrink-0">
+                    {step.step}
+                  </div>
+                  {i < parsedPath.length - 1 && (
+                    <div className="w-0.5 h-12 bg-border" />
+                  )}
+                </div>
+                <div className="pb-8">
+                  <p className="text-sm text-primary">{step.duration}</p>
+                  <p className="font-display font-bold">{step.title}</p>
+                  {step.desc && (
+                    <p className="text-sm text-muted-foreground">{step.desc}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
 
-export default CareerPage;
+          <button
+            onClick={onRetake}
+            className="w-full py-3 rounded-xl bg-foreground text-background font-semibold hover-lift mt-4 flex items-center justify-center gap-2"
+          >
+            <RotateCcw className="w-4 h-4" /> Retake Quiz
+          </button>
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+// ══════════════════════════════════════════════════════════════
+// MAIN PAGE
+// ══════════════════════════════════════════════════════════════
+const CareerPage = () => {
+  const { isPersonalized, reset } = useCareerStore()
+  const [showQuiz, setShowQuiz] = useState(!isPersonalized)
+
+  const handleQuizComplete = () => setShowQuiz(false)
+  const handleRetake = () => { reset(); setShowQuiz(true) }
+
+  return (
+    <AnimatePresence mode="wait">
+      {showQuiz ? (
+        <motion.div
+          key="quiz"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.25 }}
+        >
+          <QuizView onComplete={handleQuizComplete} />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="results"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.25 }}
+        >
+          <ResultsView onRetake={handleRetake} />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+export default CareerPage
+
+
+
