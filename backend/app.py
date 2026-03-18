@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from ml.learning_style.schema import LearningInput
 from ml.learning_style.predictor import predict_learning_style
 from pydantic import BaseModel
@@ -8,13 +8,17 @@ import os
 from dotenv import load_dotenv
 import PyPDF2
 from jose import jwt
-from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from auth import create_token   # 👈 tumhara auth.py
-import hashlib
 from sqlalchemy.orm import Session
+import hashlib
+
+# your modules
+
+from ml.model_career import model
+from ml.predictor_career import predict_top_careers, validate_scores
+from services.career_service import get_career_info
+from auth import create_token
 from database import SessionLocal, engine
-import PyPDF2
 import models
 import random
 import string
@@ -30,70 +34,75 @@ class RoomCreate(BaseModel):
 class JoinRoom(BaseModel):
     code: str
 
+# ================= INIT =================
+app = FastAPI()
+
 models.Base.metadata.create_all(bind=engine)
 
-# Load environment variables
+# ================= ENV =================
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
-app = FastAPI()
-# ✅ Study Room storage
-rooms = []
-
-# ✅ CORS CONFIG
+# ================= CORS =================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:8080",
         "http://127.0.0.1:8080",
-        "http://192.168.29.193:8080"
+        "http://192.168.29.193:8080",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# ================= AUTH =================
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
-):
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("user_id")
         user = db.query(models.User).filter(models.User.id == user_id).first()
-        if user is None:
+
+        if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        return user   # ✅ full user object return
+
+        return user
     except:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-# ✅ GET API KEY
+# ================= GROQ =================
 api_key = os.getenv("GROQ_API_KEY")
 
 if not api_key:
-    raise ValueError("❌ GROQ_API_KEY not found in .env file")
+    raise ValueError("❌ GROQ_API_KEY not found")
 
-# ✅ INIT CLIENT
 client = Groq(api_key=api_key)
 
-# ✅ Request Model
+# ================= REQUEST MODELS =================
 class TextInput(BaseModel):
     text: str
 
-# ✅ Root Route
+class CareerInput(BaseModel):
+    scores: list
+
+# ================= ROOT =================
 @app.get("/")
 def home():
     return {"message": "EduVision AI Backend Running 🚀"}
 
-# ✅ TEXT SUMMARIZER API
+# ================= TEXT SUMMARY =================
 @app.post("/summarize")
 def summarize(data: TextInput):
     try:
@@ -115,18 +124,16 @@ def summarize(data: TextInput):
             temperature=0.5
         )
 
-        summary = response.choices[0].message.content
-        return {"summary": summary}
+        return {"summary": response.choices[0].message.content}
 
     except Exception as e:
-        return {"error": str(e)}
+        print("ERROR:", e)
+        return {"error": "Something went wrong"}
 
-
-# ✅ PDF SUMMARIZER API (NEW 🔥)
+# ================= PDF SUMMARY =================
 @app.post("/summarize-pdf")
 async def summarize_pdf(file: UploadFile = File(...)):
     try:
-        # Read PDF
         pdf_reader = PyPDF2.PdfReader(file.file)
         text = ""
 
@@ -134,9 +141,8 @@ async def summarize_pdf(file: UploadFile = File(...)):
             text += page.extract_text() or ""
 
         if not text.strip():
-            return {"error": "No readable text found in PDF"}
+            return {"error": "No readable text found"}
 
-        # Limit text to avoid token overflow
         text = text[:4000]
 
         prompt = f"""
@@ -157,15 +163,13 @@ async def summarize_pdf(file: UploadFile = File(...)):
             temperature=0.5
         )
 
-        summary = response.choices[0].message.content
-
-        return {"summary": summary}
+        return {"summary": response.choices[0].message.content}
 
     except Exception as e:
-        return {"error": str(e)}
+        print("ERROR:", e)
+        return {"error": "Something went wrong"}
 
-
-# ✅ Learning Style Prediction API
+# ================= LEARNING STYLE =================
 @app.post("/predict-learning-style")
 def predict_style(data: LearningInput):
     try:
@@ -173,11 +177,43 @@ def predict_style(data: LearningInput):
         return result   # 👈 important change
     except Exception as e:
         return {"error": str(e)}
-    
-##✅ AUTH MODELS
+
+# ================= CAREER AI =================
+
+
+@app.post("/predict-career")
+def predict_career(data: CareerInput):
+    try:
+        scores = data.scores
+
+        if not validate_scores(scores):
+            raise HTTPException(status_code=400, detail="Invalid scores")
+
+        results = predict_top_careers(model,scores)
+
+        return {
+            "main_career": {
+                **get_career_info(results[0]["career"]),
+                "confidence": results[0]["confidence"]
+            },
+            "other_careers": [
+                {
+                    **get_career_info(r["career"]),
+                    "confidence": r["confidence"]
+                }
+                for r in results[1:]
+            ]
+        }
+
+    except Exception as e:
+        print("ERROR:", e)
+        return {"error": str(e)}
+
+# ================= AUTH APIs =================
 class LoginInput(BaseModel):
     email: str
     password: str
+
 class SignupInput(BaseModel):
     name: str
     email: str
@@ -187,54 +223,54 @@ class SignupInput(BaseModel):
     college: str
     course: str
 
-##✅ SIGNUP API
 @app.post("/signup")
 def signup(data: SignupInput, db: Session = Depends(get_db)):
-    existing_user = db.query(models.User).filter(models.User.email == data.email).first()
-    if existing_user:
+    if db.query(models.User).filter(models.User.email == data.email).first():
         raise HTTPException(status_code=400, detail="Email already exists")
+
     hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
-    new_user = models.User(
-    name=data.name,
-    email=data.email,
-    password=hashed_password,
-    age=data.age,
-    gender=data.gender,
-    college=data.college,
-    course=data.course
-)
-    db.add(new_user)
+
+    user = models.User(
+        name=data.name,
+        email=data.email,
+        password=hashed_password,
+        age=data.age,
+        gender=data.gender,
+        college=data.college,
+        course=data.course
+    )
+
+    db.add(user)
     db.commit()
-    db.refresh(new_user)
+    db.refresh(user)
+
     return {"message": "User created successfully"}
 
-## ✅ LOGIN API
 @app.post("/login")
 def login(data: LoginInput, db: Session = Depends(get_db)):
     hashed_password = hashlib.sha256(data.password.encode()).hexdigest()
+
     user = db.query(models.User).filter(models.User.email == data.email).first()
+
     if not user or user.password != hashed_password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
+
     token = create_token({"user_id": user.id})
     return {"access_token": token}
 
-##✅ PROFILE API
 @app.get("/profile")
-def profile(user_id: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
+def profile(current_user: models.User = Depends(get_current_user)):
     return {
-    "name": user.name,
-    "email": user.email,
-    "xp": user.xp,
-    "streak": user.streak,
-  
-    "age": user.age,
-    "gender": user.gender,
-    "college": user.college,
-    "course": user.course
-}
+        "name": current_user.name,
+        "email": current_user.email,
+        "xp": current_user.xp,
+        "streak": current_user.streak,
+        "age": current_user.age,
+        "gender": current_user.gender,
+        "college": current_user.college,
+        "course": current_user.course
+    }
 
-##✅ GET CURRENT USER DATA
 @app.get("/me")
 def get_current_user_data(current_user: models.User = Depends(get_current_user)):
     return current_user
