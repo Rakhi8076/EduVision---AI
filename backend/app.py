@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from ml.learning_style.schema import LearningInput
 from ml.learning_style.predictor import predict_learning_style
-=======
-from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
->>>>>>> a336754 (career_recommendation_feature)
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from groq import Groq
@@ -17,8 +13,7 @@ from sqlalchemy.orm import Session
 import hashlib
 
 # your modules
-from schemas.learning import Answers
-from ml.predictor import predict_learning_style
+
 from ml.model_career import model
 from ml.predictor_career import predict_top_careers, validate_scores
 from services.career_service import get_career_info
@@ -49,21 +44,15 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
-<<<<<<< HEAD
-app = FastAPI()
-# ✅ Study Room storage
-rooms = []
-
-# ✅ CORS CONFIG
-=======
 # ================= CORS =================
->>>>>>> a336754 (career_recommendation_feature)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:8080",
         "http://127.0.0.1:8080",
-        "http://192.168.29.193:8080"
+        "http://192.168.29.193:8080",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -184,12 +173,8 @@ async def summarize_pdf(file: UploadFile = File(...)):
 @app.post("/predict-learning-style")
 def predict_style(data: LearningInput):
     try:
-<<<<<<< HEAD
         result = predict_learning_style(data.answers)
         return result   # 👈 important change
-=======
-        return predict_learning_style(data.answers)
->>>>>>> a336754 (career_recommendation_feature)
     except Exception as e:
         return {"error": str(e)}
 
@@ -287,7 +272,6 @@ def profile(current_user: models.User = Depends(get_current_user)):
     }
 
 @app.get("/me")
-<<<<<<< HEAD
 def get_current_user_data(current_user: models.User = Depends(get_current_user)):
     return current_user
 
@@ -326,7 +310,3 @@ def delete_room(code: str):
     global rooms
     rooms = [r for r in rooms if r["code"] != code]
     return {"message": "Room deleted"}
-=======
-def get_me(current_user: models.User = Depends(get_current_user)):
-    return current_user
->>>>>>> a336754 (career_recommendation_feature)
