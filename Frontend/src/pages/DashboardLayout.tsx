@@ -15,6 +15,7 @@ const navItems = [
   { icon: BookOpen, label: "Summarizer", path: "/dashboard/summarizer" },
   { icon: Compass, label: "Career Path", path: "/dashboard/career" },
   { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
+  { icon: Layers, label: "Study Room", path: "/dashboard/study-room" },
   { icon: User, label: "Profile", path: "/dashboard/profile" },
 ];
 
@@ -43,9 +44,8 @@ const DashboardLayout = () => {
               key={item.path}
               to={item.path}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                active ? "gradient-primary shadow-md" : "hover:bg-muted"
-              }`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${active ? "gradient-primary shadow-md" : "hover:bg-muted"
+                }`}
             >
               <item.icon className="w-5 h-5 shrink-0" />
               {!collapsed && <span>{item.label}</span>}

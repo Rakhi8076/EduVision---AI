@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
-from schemas.learning import Answers
-from ml.predictor import predict_learning_style
+from ml.learning_style.schema import LearningInput
+from ml.learning_style.predictor import predict_learning_style
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from groq import Groq
@@ -16,6 +16,19 @@ from sqlalchemy.orm import Session
 from database import SessionLocal, engine
 import PyPDF2
 import models
+import random
+import string
+
+def generate_code():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+
+# ✅ Study Room Models
+class RoomCreate(BaseModel):
+    name: str
+
+class JoinRoom(BaseModel):
+    code: str
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -25,6 +38,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
 app = FastAPI()
+# ✅ Study Room storage
+rooms = []
 
 # ✅ CORS CONFIG
 app.add_middleware(
@@ -152,14 +167,10 @@ async def summarize_pdf(file: UploadFile = File(...)):
 
 # ✅ Learning Style Prediction API
 @app.post("/predict-learning-style")
-def predict_style(data: Answers):
+def predict_style(data: LearningInput):
     try:
         result = predict_learning_style(data.answers)
-        return {
-            "style": result["style"],
-            "description": result["description"],
-            "recommendations": result["recommendations"]
-        }
+        return result   # 👈 important change
     except Exception as e:
         return {"error": str(e)}
     
@@ -227,3 +238,39 @@ def profile(user_id: int = Depends(get_current_user), db: Session = Depends(get_
 @app.get("/me")
 def get_current_user_data(current_user: models.User = Depends(get_current_user)):
     return current_user
+
+
+# ===============================
+# 🔥 STUDY ROOM APIs
+# ===============================
+
+@app.post("/rooms")
+def create_room(data: RoomCreate):
+    new_room = {
+        "name": data.name,
+        "members": 1,
+        "code": generate_code()
+    }
+    rooms.append(new_room)
+    return new_room
+
+
+@app.get("/rooms")
+def get_rooms():
+    return rooms
+
+
+@app.post("/rooms/join")
+def join_room(data: JoinRoom):
+    for room in rooms:
+        if room["code"] == data.code:
+            room["members"] += 1
+            return room
+    return {"error": "Room not found"}
+
+
+@app.delete("/rooms/{code}")
+def delete_room(code: str):
+    global rooms
+    rooms = [r for r in rooms if r["code"] != code]
+    return {"message": "Room deleted"}
