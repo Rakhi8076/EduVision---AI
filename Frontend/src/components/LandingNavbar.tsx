@@ -19,7 +19,7 @@ const LandingNavbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <Link to="/" className="flex items-center gap-2 font-display text-xl font-bold">
-          <img src={foxyMascot} alt="Foxy" className="w-8 h-8" />
+          <img src={foxyMascot} alt="Foxy" className="w-12 h-12" />
           <span className="text-gradient">EduVision AI</span>
         </Link>
 
