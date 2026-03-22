@@ -209,6 +209,67 @@ def predict_career(data: CareerInput):
         print("ERROR:", e)
         return {"error": str(e)}
 
+# ================= QUIZ GENERATION =================
+class QuizRequest(BaseModel):
+    career: str
+
+@app.post("/generate-quiz")
+def generate_quiz(data: QuizRequest):
+    try:
+        prompt = f"""
+Generate exactly 10 multiple choice questions to test knowledge about the career: {data.career}
+
+Rules:
+- Each question must have exactly 4 options
+- Only one option is correct
+- Questions should test real knowledge about this career field
+- Vary difficulty: 3 easy, 4 medium, 3 hard
+- Return ONLY valid JSON, no extra text, no markdown
+
+Format:
+{{
+  "questions": [
+    {{
+      "q": "Question text here?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": 0
+    }}
+  ]
+}}
+
+answer is the index (0-3) of the correct option.
+"""
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert educator. Always respond with valid JSON only. No markdown, no extra text, no backticks."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.7
+        )
+
+        raw = response.choices[0].message.content.strip()
+
+        # Clean markdown if Groq adds it anyway
+        if "```" in raw:
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+
+        import json
+        questions = json.loads(raw.strip())
+        return questions
+
+    except Exception as e:
+        print("ERROR generating quiz:", e)
+        return {"error": str(e)}
+    
 # ================= AUTH APIs =================
 class LoginInput(BaseModel):
     email: str
@@ -279,7 +340,7 @@ def get_current_user_data(current_user: models.User = Depends(get_current_user))
 # ===============================
 # 🔥 STUDY ROOM APIs
 # ===============================
-
+rooms = []  # In-memory storage for rooms (for demo purposes only)
 @app.post("/rooms")
 def create_room(data: RoomCreate):
     new_room = {

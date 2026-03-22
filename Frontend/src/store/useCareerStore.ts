@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export interface LearningStep {
   step: number
@@ -21,12 +22,19 @@ interface CareerStore {
   reset: () => void
 }
 
-export const useCareerStore = create<CareerStore>((set) => ({
-  mainCareer: null,
-  otherCareers: [],
-  isPersonalized: false,
-  setResults: (main, others) =>
-    set({ mainCareer: main, otherCareers: others, isPersonalized: true }),
-  reset: () =>
-    set({ mainCareer: null, otherCareers: [], isPersonalized: false }),
-}))
+export const useCareerStore = create<CareerStore>()(
+  persist(
+    (set) => ({
+      mainCareer: null,
+      otherCareers: [],
+      isPersonalized: false,
+      setResults: (main, others) =>
+        set({ mainCareer: main, otherCareers: others, isPersonalized: true }),
+      reset: () =>
+        set({ mainCareer: null, otherCareers: [], isPersonalized: false }),
+    }),
+    {
+      name: 'career-store', // saves to localStorage
+    }
+  )
+)

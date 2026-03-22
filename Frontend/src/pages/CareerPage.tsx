@@ -6,32 +6,50 @@ import {
   Loader2, RotateCcw, BadgeCheck
 } from "lucide-react"
 
-const questions = [
-  {
-    type: "R",
-    text: "How much do you enjoy building, fixing, or working with tools and machines?",
-  },
-  {
-    type: "I",
-    text: "How much do you enjoy analysing data, solving complex problems, or doing research?",
-  },
-  {
-    type: "A",
-    text: "How much do you enjoy creative activities like design, writing, or art?",
-  },
-  {
-    type: "S",
-    text: "How much do you enjoy helping, teaching, or working closely with people?",
-  },
-  {
-    type: "E",
-    text: "How much do you enjoy leading teams, starting ventures, or persuading others?",
-  },
-  {
-    type: "C",
-    text: "How much do you enjoy organising, managing records, or working with structured systems?",
-  },
-]
+const questionBank: Record<string, string[]> = {
+  R: [
+    "How much do you enjoy building, fixing, or working with tools and machines?",
+    "How much do you enjoy working outdoors or doing physical/hands-on tasks?",
+    "How much do you enjoy assembling, repairing, or operating equipment?",
+    "How much do you enjoy working with mechanical or electrical systems?",
+  ],
+  I: [
+    "How much do you enjoy analysing data, solving complex problems, or doing research?",
+    "How much do you enjoy learning about science, technology, or how things work?",
+    "How much do you enjoy solving mathematical or logical puzzles?",
+    "How much do you enjoy reading research papers or investigating new ideas?",
+  ],
+  A: [
+    "How much do you enjoy creative activities like design, writing, or art?",
+    "How much do you enjoy expressing yourself through music, photography, or storytelling?",
+    "How much do you enjoy creating visual content, videos, or graphic designs?",
+    "How much do you enjoy coming up with innovative or unconventional ideas?",
+  ],
+  S: [
+    "How much do you enjoy helping, teaching, or working closely with people?",
+    "How much do you enjoy mentoring, counselling, or supporting others?",
+    "How much do you enjoy working in teams and building relationships?",
+    "How much do you enjoy volunteering or contributing to your community?",
+  ],
+  E: [
+    "How much do you enjoy leading teams, starting ventures, or persuading others?",
+    "How much do you enjoy negotiating, pitching ideas, or making business decisions?",
+    "How much do you enjoy taking initiative and managing projects?",
+    "How much do you enjoy motivating others and driving results?",
+  ],
+  C: [
+    "How much do you enjoy organising, managing records, or working with structured systems?",
+    "How much do you enjoy working with numbers, spreadsheets, or financial data?",
+    "How much do you enjoy following procedures and maintaining accuracy?",
+    "How much do you enjoy planning, scheduling, or managing details?",
+  ],
+}
+
+const getRandomQuestions = () =>
+  ["R", "I", "A", "S", "E", "C"].map((type) => {
+    const pool = questionBank[type]
+    return { type, text: pool[Math.floor(Math.random() * pool.length)] }
+  })
 
 const RIASEC_LABELS: Record<string, string> = {
   R: "Realistic",
@@ -69,6 +87,7 @@ const parseStep = (content: string, step: number) => {
 // ══════════════════════════════════════════════════════════════
 const QuizView = ({ onComplete }: { onComplete: () => void }) => {
   const setResults = useCareerStore((s) => s.setResults)
+  const [questions] = useState(() => getRandomQuestions()) // ✅ random on mount
   const [current, setCurrent] = useState(0)
   const [ratings, setRatings] = useState<Record<number, number>>({})
   const [loading, setLoading] = useState(false)

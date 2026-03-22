@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { BookOpen, Trophy, Brain, Compass, Flame, Star, Award, TrendingUp, Lightbulb, Target, Zap } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import foxyMascot from "@/assets/foxy-mascot.png";
+import { useNavigate } from "react-router-dom";
 
 const stats = [
   { label: "Study Hours", value: "142", icon: BookOpen, color: "bg-secondary" },
@@ -45,11 +46,11 @@ const leaderboard = [
 ];
 
 const quickActions = [
-  { label: "Continue Quiz", icon: Brain, path: "/dashboard/learning-style" },
+  { label: "Continue Quiz", icon: Brain, path: "/dashboard/continue-quiz" }, // ✅ updated
   { label: "Review Flashcards", icon: BookOpen, path: "/dashboard/flashcards" },
   { label: "Check Analytics", icon: TrendingUp, path: "/dashboard/analytics" },
   { label: "Career Guide", icon: Compass, path: "/dashboard/career" },
-];
+]
 
 const DashboardHome = () => {
   const user = getCurrentUser();

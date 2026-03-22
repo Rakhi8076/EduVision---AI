@@ -19,6 +19,7 @@ import CareerPage from "./pages/CareerPage";
 import FlashcardsPage from "./pages/FlashcardsPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
+import ContinueQuizPage from "./pages/ContinueQuizPage";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="summarizer" element={<SummarizerPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="career" element={<CareerPage />} />
+              <Route path="continue-quiz" element={<ContinueQuizPage />} />
               <Route path="flashcards" element={<FlashcardsPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="/dashboard/room/:code" element={<RoomDetailPage />} />
