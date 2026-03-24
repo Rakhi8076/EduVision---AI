@@ -130,7 +130,7 @@ npm run dev
 
 * **Nandini Shukla**
 * **Rakhi**
-
+* **Rachita Jain**
 ---
 
 ## 🏆 Hackathon Project
